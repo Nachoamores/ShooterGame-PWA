@@ -1,6 +1,6 @@
 const OPPONENT_HEIGHT = 5,
-    OPPONENT_PICTURE = "assets/malo.png",
-    OPPONENT_PICTURE_DEAD = "assets/malo_muerto.png",
+    OPPONENT_PICTURE = "assets/opponent.png",
+    OPPONENT_PICTURE_DEAD = "assets/opponent_dead.png",
     OPPONENT_SPEED = 5,
     OPPONENT_WIDTH = 5,
     GAME_OVER_PICTURE = "assets/game_over.png",
@@ -9,63 +9,61 @@ const OPPONENT_HEIGHT = 5,
     KEY_SHOOT = "SHOOT",
     MIN_TOUCHMOVE = 20,
     PLAYER_HEIGHT = 5,
-    PLAYER_PICTURE = "assets/bueno.png",
-    PLAYER_PICTURE_DEAD = "assets/bueno_muerto.png",
+    PLAYER_PICTURE = "assets/player.png",
+    PLAYER_PICTURE_DEAD = "assets/player_dead.png",
     PLAYER_SPEED = 20,
     PLAYER_WIDTH = 5,
+    PLAYER_LIVES = 3,
     SHOT_HEIGHT = 1.5,
     SHOT_SPEED = 20,
     SHOT_PICTURE_PLAYER = "assets/shot1.png",
     SHOT_PICTURE_OPPONENT = "assets/shot2.png",
     SHOT_WIDTH = 1.5;
 
-// Registrar el Service Worker
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js')
-        .then((registration) => {
-            console.log('Service Worker registrado con éxito:', registration);
-        })
-        .catch((error) => {
-            console.error('Error al registrar el Service Worker:', error);
-        });
-}
-
-// Gestión del botón de instalación
-let deferredPrompt;
-const installButton = document.getElementById('installButton');
-
-window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    installButton.style.display = 'block';
-
-    installButton.addEventListener('click', () => {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then((choiceResult) => {
-            if (choiceResult.outcome === 'accepted') {
-                console.log('El usuario aceptó la instalación');
-            } else {
-                console.log('El usuario rechazó la instalación');
-            }
-            deferredPrompt = null;
-        });
-    });
-});
-
-function getRandomNumber(range) {
+function getRandomNumber (range) {
     return Math.floor(Math.random() * range);
 }
 
-function collision(div1, div2) {
+function collision (div1, div2) {
     const a = div1.getBoundingClientRect(),
         b = div2.getBoundingClientRect();
     return !(a.bottom < b.top || a.top > b.bottom || a.right < b.left || a.left > b.right);
+
 }
 
 var game;
+let deferredPrompt;
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js')
+    .then(registration => {
+      console.log('Service Worker registered successfully:', registration);
+    })
+    .catch(error => {
+      console.error('Error registering Service Worker:', error);
+    });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
         game = new Game();
         game.start();
+        const installButton = document.getElementById("installButton");
+ 
+        window.addEventListener('beforeinstallprompt', (e) => {
+          e.preventDefault();
+          deferredPrompt = e;
+
+          installButton.addEventListener('click', () => {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+              if (choiceResult.outcome === 'accepted') {
+                console.log('User accepted installation');
+              } else {
+                console.log('User declined installation');
+              }
+              deferredPrompt = null;
+            });
+          });
+        });
     }
 );
-

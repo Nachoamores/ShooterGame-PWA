@@ -1,50 +1,40 @@
 const CACHE_NAME = 'shooter-cache-v1';
 const urlsToCache = [
+  '/',
   '/index.html',
-  '/game.css',
-  '/main.js',
-  '/Character.js',
-  '/Entity.js',
   '/Game.js',
-  '/Opponent.js',
+  '/Entity.js',
+  '/Character.js',
   '/Player.js',
+  '/Opponent.js',
+  '/Boss.js',
   '/Shot.js',
-  '/assets/bueno.png',
-  '/assets/malo.png',
+  '/main.js',
+  '/game.css',
+  '/assets/boss.png',
+  '/assets/boss_dead.png',
+  '/assets/game_over.png',
+  '/assets/opponent.png',
+  '/assets/opponent_dead.png',
+  '/assets/player.png',
+  '/assets/player_dead.png',
   '/assets/shot1.png',
-  '/assets/shot2.png'
+  '/assets/shot2.png',
+  '/assets/you_win.png',
+  '/icons/icon-192x192.png',
+  '/icons/icon-512x512.png'
 ];
 
-// Install event
-self.addEventListener('install', (event) => {
+self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(urlsToCache);
-    })
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(urlsToCache))
   );
 });
 
-// Fetch event
-self.addEventListener('fetch', (event) => {
+self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
-    })
-  );
-});
-
-// Activate event
-self.addEventListener('activate', (event) => {
-  const cacheWhitelist = [CACHE_NAME];
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (!cacheWhitelist.includes(cacheName)) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
+    caches.match(event.request)
+      .then(response => response || fetch(event.request))
   );
 });
